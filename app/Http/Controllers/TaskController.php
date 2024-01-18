@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -12,7 +13,7 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
 
-        return response()->json($tasks);
+        return response()->json(['tasks' => $tasks]);
     }
 
     public function store(Request $request)
@@ -26,6 +27,10 @@ class TaskController extends Controller
             'completed_at' => 'nullable|date',
             'status' => 'required|integer|in:0,1,2,3',
         ]);
+
+        // Use Carbon to create Carbon instances for date fields
+        $validatedData['deadline'] = Carbon::parse($validatedData['deadline']);
+        $validatedData['completed_at'] = $validatedData['completed_at'] ? Carbon::parse($validatedData['completed_at']) : null;
 
         $task = Task::create($validatedData);
 
@@ -52,6 +57,11 @@ class TaskController extends Controller
         ]);
 
         $task = Task::findOrFail($id);
+
+        // Use Carbon to create Carbon instances for date fields
+        $validatedData['deadline'] = Carbon::parse($validatedData['deadline']);
+        $validatedData['completed_at'] = $validatedData['completed_at'] ? Carbon::parse($validatedData['completed_at']) : null;
+
         $task->update($validatedData);
 
         return response()->json(['success' => 'Task updated successfully'], 200);
