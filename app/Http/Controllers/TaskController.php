@@ -13,7 +13,7 @@ class TaskController extends Controller
     {
         $tasks = Task::all();
 
-        return response()->json(['tasks' => $tasks]);
+        return response()->json($tasks);
     }
 
     public function store(Request $request)
@@ -58,7 +58,7 @@ class TaskController extends Controller
 
         $task = Task::findOrFail($id);
 
-        // Use Carbon to create Carbon instances for date fields
+
         $validatedData['deadline'] = Carbon::parse($validatedData['deadline']);
         $validatedData['completed_at'] = $validatedData['completed_at'] ? Carbon::parse($validatedData['completed_at']) : null;
 
